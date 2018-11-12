@@ -1,7 +1,7 @@
 package buisness.entities;
 
 public class Voiture {
-	
+
 	private Long id;
 	private String marque;
 	private String modele;
@@ -45,7 +45,7 @@ public class Voiture {
 	public void setColor(String color) {
 		this.color = color;
 	}
-	
+
 	public Voiture(Long id, String marque, String modele, Moteur moteur, Frein frein, String color) {
 		super();
 		this.id = id;
@@ -58,7 +58,7 @@ public class Voiture {
 	public Voiture() {
 		super();
 	}
-	
-	
+
+
 
 }
