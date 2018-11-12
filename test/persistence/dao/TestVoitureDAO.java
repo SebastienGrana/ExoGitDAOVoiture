@@ -9,9 +9,9 @@ import buisness.entities.Moteur;
 import buisness.entities.Voiture;
 import persistence.pere.TU_Pere;
 
-public class TestVoitureDAO extends TU_Pere{
+public class TestVoitureDAO extends TU_Pere {
 
-	VoitureDAO voitureDAO ;
+	VoitureDAO voitureDAO;
 	FreinDAO freinDAO;
 	MoteurDAO moteurDAO;
 
@@ -19,26 +19,27 @@ public class TestVoitureDAO extends TU_Pere{
 	public void setUp() throws Exception {
 		super.setUp();
 		voitureDAO = new VoitureDAO();
-		
+
 		freinDAO = new FreinDAO();
 		moteurDAO = new MoteurDAO();
 	}
 
 	public void testCreate() throws Exception {
-		Moteur moteur = new Moteur(99l, "Simon AUTO", "M656" , 150);
+		Moteur moteur = new Moteur(99l, "Simon AUTO", "M656", 150);
 		Frein frein = new Frein(99l, "Robert Automobile", "H444");
 		moteur = moteurDAO.create(moteur);
 		frein = freinDAO.create(frein);
-		
-		Voiture voiture= new Voiture((long)99, "Bébere Répar", "H265", moteur, frein);
+
+		Voiture voiture = new Voiture((long) 99, "Bï¿½bere Rï¿½par", "H265", moteur, frein, "Bleu");
 		voiture = voitureDAO.create(voiture);
 
-
 		Voiture voitureFromList = voitureDAO.findById(voiture.getId());
-		
+
 		assertEquals(voiture.getMarque(), voitureFromList.getMarque());
 		assertEquals(voiture.getModele(), "H265");
 		assertEquals(voiture.getId(), voitureFromList.getId());
+		assertNotNull(voiture.getColor());
+		assertEquals(voiture.getColor(), voitureFromList.getId());
 	}
 
 	public void testFindById() {
@@ -56,72 +57,76 @@ public class TestVoitureDAO extends TU_Pere{
 		try {
 			Long idNull = null;
 			Voiture voitureFindById = voitureDAO.findById(idNull);
-			assertNotNull(null);			
+			assertNotNull(null);
 		} catch (Exception e) {
-			assertNotNull(e);			
+			assertNotNull(e);
 		}
 
 	}
 
-	public void testFindList() throws Exception {	
-		
-		//test la taille de la liste
+	public void testFindList() throws Exception {
+
+		// test la taille de la liste
 		List<Voiture> voitures = voitureDAO.findList();
 		int realNb = getInserter().select("select count(id) from AutoMobile").getDataAsInt();
-		assertEquals(voitures.size(),realNb);
+		assertEquals(voitures.size(), realNb);
 
-		//test la taille de la liste
-		Moteur moteur = new Moteur(99l, "Simon AUTO", "M656" , 150);
+		// test la taille de la liste
+		Moteur moteur = new Moteur(99l, "Simon AUTO", "M656", 150);
 		Frein frein = new Frein(99l, "Robert Automobile", "H444");
 		moteur = moteurDAO.create(moteur);
 		frein = freinDAO.create(frein);
-		
-		Voiture voiture= new Voiture((long)99, "Bébere Répar", "H265", moteur, frein);
+
+		Voiture voiture = new Voiture((long) 99, "Bï¿½bere Rï¿½par", "H265", moteur, frein, "Jaune");
 		voiture = voitureDAO.create(voiture);
+		assertEquals("Jaune", voiture.getColor());
+		assertNotNull(voiture.getColor());
 
 		voitures = voitureDAO.findList();
 		realNb = getInserter().select("select count(id) from AutoMobile").getDataAsInt();
 
-		assertEquals(voitures.size(),realNb);
+		assertEquals(voitures.size(), realNb);
 	}
-	
+
 	public void testUpdateById() {
 
 		try {
-			Moteur moteur = new Moteur(99l, "Simon AUTO", "M656" , 150);
+			Moteur moteur = new Moteur(99l, "Simon AUTO", "M656", 150);
 			Frein frein = new Frein(99l, "Robert Automobile", "H444");
 			moteur = moteurDAO.create(moteur);
 			frein = freinDAO.create(frein);
-			
-			Voiture voiture= new Voiture((long)99, "Bébere Répar", "H265", moteur, frein);
+
+			Voiture voiture = new Voiture((long) 99, "Bï¿½bere Rï¿½par", "H265", moteur, frein, "Vert");
 			voiture = voitureDAO.create(voiture);
+			assertEquals("Vert", voiture.getColor());
 			voiture.setMarque("Jean Claude Mekka");
+			voiture.setColor("Bleu");
 			voitureDAO.updateById(voiture);
-			
+
 			Voiture voitureUpdated = voitureDAO.findById(voiture.getId());
-			
+
 			assertEquals("Jean Claude Mekka", voitureUpdated.getMarque());
+			assertEquals("Bleu", voitureUpdated.getColor());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	public void testDeleteById() {
 		Long idDeleted = 1l;
 		Integer idDeletedNull = null;
-		
-		//test si on supprimer bien la species
+
+		// test si on supprimer bien la species
 		try {
-			Moteur moteur = new Moteur(99l, "Simon AUTO", "M656" , 150);
+			Moteur moteur = new Moteur(99l, "Simon AUTO", "M656", 150);
 			Frein frein = new Frein(99l, "Robert Automobile", "H444");
 			moteur = moteurDAO.create(moteur);
 			frein = freinDAO.create(frein);
-			
-			Voiture voiture= new Voiture((long)99, "Bébere Répar", "H265", moteur, frein);
+
+			Voiture voiture = new Voiture((long) 99, "Bï¿½bere Rï¿½par", "H265", moteur, frein, "Jaune");
 			voiture = voitureDAO.create(voiture);
 			idDeleted = voiture.getId();
-			
+
 			voitureDAO.deleteById(idDeleted);
 			assertNull(null);
 		} catch (Exception e) {
@@ -129,7 +134,7 @@ public class TestVoitureDAO extends TU_Pere{
 
 		}
 
-		//test si bien non présent dans la liste
+		// test si bien non prï¿½sent dans la liste
 		try {
 			List<Voiture> list = voitureDAO.findList();
 			for (Voiture voiture : list) {
@@ -138,8 +143,8 @@ public class TestVoitureDAO extends TU_Pere{
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		
-		//test si erreur
+
+		// test si erreur
 		try {
 			voitureDAO.deleteById(idDeletedNull);
 			assertNotNull(null);
