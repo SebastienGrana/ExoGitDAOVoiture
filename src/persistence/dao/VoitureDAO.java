@@ -13,10 +13,10 @@ import persistence.manager.JDBCManager;
 
 public class VoitureDAO implements IDAO<Voiture>{
 
-	public static final String sqlInsertAutoMobile = "INSERT INTO AutoMobile (marque, modele, moteur_id, frein_id) values (?,?,?,?)";
+	public static final String sqlInsertAutoMobile = "INSERT INTO AutoMobile (marque, modele, moteur_id, frein_id, color) values (?,?,?,?,?)";
 	public static final String sqlSelectOneAutoMobile = "SELECT * FROM AutoMobile WHERE id = ?";
 	public static final String sqlSelectAllAutoMobile = "SELECT * FROM AutoMobile";
-	public static final String sqlUpdateAutoMobile = "UPDATE AutoMobile SET  marque = ?, modele = ?, moteur_id = ?, frein_id = ? WHERE id = ?";
+	public static final String sqlUpdateAutoMobile = "UPDATE AutoMobile SET  marque = ?, modele = ?, moteur_id = ?, frein_id = ?, color=? WHERE id = ?";
 	public static final String sqlDeleteAutoMobile = "DELETE FROM AutoMobile WHERE id = ?";
 
 	@Override
@@ -27,6 +27,7 @@ public class VoitureDAO implements IDAO<Voiture>{
 		preparedStatement.setString(2, pT.getModele());		
 		preparedStatement.setLong(3, pT.getMoteur().getId());
 		preparedStatement.setLong(4, pT.getFrein().getId());
+		preparedStatement.setString(5, pT.getColor());
 
 		preparedStatement.execute();
 		ResultSet resultSet = preparedStatement.getGeneratedKeys();
@@ -57,8 +58,9 @@ public class VoitureDAO implements IDAO<Voiture>{
 
 			Moteur moteur = moteurDAO.findById(st.getLong("moteur_id"));
 			Frein frein = freinDAO.findById(st.getLong("frein_id"));
+			String color = st.getString("color");
 			/* ... */
-			voiture = new Voiture(id, marque, modele, moteur, frein);
+			voiture = new Voiture(id, marque, modele, moteur, frein,color);
 		}
 		JDBCManager.getInstance().closeConnection();
 		return voiture;
@@ -81,8 +83,9 @@ public class VoitureDAO implements IDAO<Voiture>{
 
 			Moteur moteur = moteurDAO.findById(st.getLong("moteur_id"));
 			Frein frein = freinDAO.findById(st.getLong("frein_id"));
+			String color = st.getString("color");
 			/* ... */
-			voiture = new Voiture(id, marque, modele, moteur, frein);
+			voiture = new Voiture(id, marque, modele, moteur, frein,color);
 			list.add(voiture);
 		}
 		JDBCManager.getInstance().closeConnection();
@@ -97,7 +100,8 @@ public class VoitureDAO implements IDAO<Voiture>{
 		preparedStatement.setString(2, pT.getModele());
 		preparedStatement.setLong(3, pT.getMoteur().getId());
 		preparedStatement.setLong(4, pT.getFrein().getId());
-		preparedStatement.setLong(5, pT.getId());
+		preparedStatement.setString(5, pT.getColor());
+		preparedStatement.setLong(6, pT.getId());
 		preparedStatement.execute();
 
 		JDBCManager.getInstance().closeConnection();
